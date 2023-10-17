@@ -25,7 +25,7 @@ export default function DashboardViews({ query, omitMatchingParams, onChange, vi
   }, [JSON.stringify(currentQuery)]);
 
   return (
-    <Box mb={3}>
+    <div className="mb-4">
       <Tabs
         tabs={views}
         selectedId={currentView?.id}
@@ -36,6 +36,6 @@ export default function DashboardViews({ query, omitMatchingParams, onChange, vi
           }
         }}
       />
-    </Box>
+    </div>
   );
 }

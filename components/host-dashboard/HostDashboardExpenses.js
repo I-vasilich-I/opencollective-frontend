@@ -35,6 +35,8 @@ import StyledButton from '../StyledButton';
 
 import HostInfoCard, { hostInfoCardFields } from './HostInfoCard';
 import ScheduledExpensesBanner from './ScheduledExpensesBanner';
+import { getExpensesFilterOptions } from '../expenses/expensesFilterOptions';
+import { Filters } from '../filters/Filters';
 
 const hostDashboardExpensesQuery = gql`
   query HostDashboardExpenses(
@@ -284,6 +286,11 @@ const HostDashboardExpenses = ({ hostSlug, isDashboard }) => {
     return omitBy({ ...query, ...newParams }, (value, key) => !value || ROUTE_PARAMS.includes(key));
   };
 
+  const filterOptions = React.useMemo(
+    () => getExpensesFilterOptions({ intl, collective: metaData?.host }),
+    [intl, metaData?.host],
+  );
+
   return (
     <React.Fragment>
       <div className="mb-5 flex flex-wrap justify-between gap-4">
@@ -358,23 +365,23 @@ const HostDashboardExpenses = ({ hostSlug, isDashboard }) => {
           ) : null
         }
       />
-      {expensePipelineFeatureIsEnabled && (
-        <DashboardViews
-          query={query}
-          omitMatchingParams={[...ROUTE_PARAMS, 'orderBy']}
-          views={views}
-          onChange={query => {
-            router.push(
-              {
-                pathname: pageRoute,
-                query,
-              },
-              undefined,
-              { scroll: false },
-            );
-          }}
-        />
-      )}
+
+      <Filters
+        query={query}
+        filterOptions={filterOptions}
+        views={views}
+        omitMatchingParams={[...ROUTE_PARAMS, 'orderBy']}
+        onChange={query => {
+          router.push(
+            {
+              pathname: pageRoute,
+              query,
+            },
+            undefined,
+            { scroll: false },
+          );
+        }}
+      />
 
       <Box mb={34}>
         {metaData?.host ? (
