@@ -591,38 +591,70 @@ const Policies = ({ collective, showOnlyExpensePolicy }) => {
           />
         </Container>
         {collective.isHost && (
-          <Container>
-            <SettingsSectionTitle mt={4}>
-              <FormattedMessage defaultMessage="Expense types" />
-            </SettingsSectionTitle>
-            <P mb={2}>
-              <FormattedMessage
-                id="editCollective.expenseTypes.description"
-                defaultMessage="Specify the types of expenses allowed for all the collectives you're hosting. If you wish to customize these options for specific collectives, head to the <HostedCollectivesLink>Hosted Collectives</HostedCollectivesLink> section."
-                values={{
-                  HostedCollectivesLink: getI18nLink({
-                    as: Link,
-                    href: `/${collective.slug}/admin/hosted-collectives`,
-                  }),
-                }}
-              />
-            </P>
+          <React.Fragment>
+            <Container>
+              <SettingsSectionTitle mt={4}>
+                <FormattedMessage defaultMessage="Expense types" />
+              </SettingsSectionTitle>
+              <P mb={2}>
+                <FormattedMessage
+                  id="editCollective.expenseTypes.description"
+                  defaultMessage="Specify the types of expenses allowed for all the collectives you're hosting. If you wish to customize these options for specific collectives, head to the <HostedCollectivesLink>Hosted Collectives</HostedCollectivesLink> section."
+                  values={{
+                    HostedCollectivesLink: getI18nLink({
+                      as: Link,
+                      href: `/dashboard/${collective.slug}/hosted-collectives`,
+                    }),
+                  }}
+                />
+              </P>
 
-            {['RECEIPT', 'INVOICE', 'GRANT'].map(type => (
+              {['RECEIPT', 'INVOICE', 'GRANT'].map(type => (
+                <StyledCheckbox
+                  key={type}
+                  name={`allow-${type}-submission`}
+                  label={formatMessage(messages[`expensePolicy.${type}`])}
+                  checked={Boolean(formik.values.expenseTypes[type])}
+                  onChange={() =>
+                    formik.setFieldValue('expenseTypes', {
+                      ...formik.values.expenseTypes,
+                      [type]: !formik.values.expenseTypes[type],
+                    })
+                  }
+                />
+              ))}
+            </Container>
+            <Container>
+              <SettingsSectionTitle mt={4}>
+                <FormattedMessage defaultMessage="Expense categorization process" />
+              </SettingsSectionTitle>
+              <P mb={2}>
+                <FormattedMessage
+                  defaultMessage="You can choose to allow collective admins and expense submitters to participate in the categorization process. They will have to pick and confirm the category of expenses before they can be paid, based on the <LinkAccountingCategories>chart of accounts</LinkAccountingCategories> that you have set up."
+                  values={{
+                    LinkAccountingCategories: getI18nLink({
+                      as: Link,
+                      href: `/dashboard/${collective.slug}/host-accounting`,
+                    }),
+                  }}
+                />
+              </P>
+
               <StyledCheckbox
-                key={type}
-                name={`allow-${type}-submission`}
-                label={formatMessage(messages[`expensePolicy.${type}`])}
-                checked={Boolean(formik.values.expenseTypes[type])}
+                name={`checkbox-OPEN_EXPENSE_CATEGORIZATION_PROCESS`}
+                label={
+                  <FormattedMessage defaultMessage="Let collective admins and expense submitters participate in the categorization process" />
+                }
+                checked={formik.values.policies?.OPEN_EXPENSE_CATEGORIZATION_PROCESS}
                 onChange={() =>
-                  formik.setFieldValue('expenseTypes', {
-                    ...formik.values.expenseTypes,
-                    [type]: !formik.values.expenseTypes[type],
+                  formik.setFieldValue('policies', {
+                    ...formik.values.policies,
+                    OPEN_EXPENSE_CATEGORIZATION_PROCESS: !formik.values.policies?.OPEN_EXPENSE_CATEGORIZATION_PROCESS,
                   })
                 }
               />
-            ))}
-          </Container>
+            </Container>
+          </React.Fragment>
         )}
         <Container>
           <SettingsSectionTitle mt={4}>
